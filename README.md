@@ -7,8 +7,10 @@ GPTQ is SOTA one-shot weight quantization method
 ```
 pip install git+https://github.com/zphang/transformers@llama_push
 
+# For fast test 4bit inference, you can not need to download pytorch_model-*.bin
 git lfs install
 git clone https://huggingface.co/decapoda-research/llama-7b-hf
+
 git clone https://github.com/clcarwin/GPTQ-for-LLaMa-Inference
 cd GPTQ-for-LLaMa-Inference
 
