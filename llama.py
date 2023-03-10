@@ -408,7 +408,12 @@ if __name__ == '__main__':
         if args.benchmark:
             input_ids = next(iter(dataloader))[0][:, :args.benchmark]
             benchmark(model, input_ids, check=args.check)
-    if args.load:
+    # if args.load:
+    #     exit()
+
+    if args.save:
+        llama_pack(model, quantizers, args.wbits)
+        torch.save(model.state_dict(), args.save) 
         exit()
 
     for dataset in ['wikitext2', 'ptb', 'c4']:
@@ -417,7 +422,3 @@ if __name__ == '__main__':
         )
         print(dataset)
         llama_eval(model, testloader, DEV)
-
-    if args.save:
-        llama_pack(model, quantizers, args.wbits)
-        torch.save(model.state_dict(), args.save) 
