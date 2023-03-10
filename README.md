@@ -64,7 +64,7 @@ See `zeroShot/` folder.
 # Install kernels
 python setup_cuda.py install
 
-# Benchmark performance for FC2 layer of LLaMa-33B
+# Benchmark performance for FC2 layer of LLaMa-7B
 CUDA_VISIBLE_DEVICES=0 python test_kernel.py
 
 # Benchmark language generation with 4-bit LLaMa-7B:
@@ -75,6 +75,9 @@ CUDA_VISIBLE_DEVICES=0 python llama.py decapoda-research/llama-7b-hf c4 --wbits 
 CUDA_VISIBLE_DEVICES=0 python llama.py decapoda-research/llama-7b-hf c4 --wbits 4 --load llama7b-4bit.pt --benchmark 2048 --check
 # Benchmark FP16 baseline, note that the model will be split across all listed GPUs
 CUDA_VISIBLE_DEVICES=0,1,2,3,4 python llama.py decapoda-research/llama-7b-hf c4 --benchmark 2048 --check
+
+# model inference with the saved model
+CUDA_VISIBLE_DEVICES=0 python llama_inference.py decapoda-research/llama-7b-hf --wbits 4 --load llama7b-4bit.pt --text "this is llama"
 ```
 CUDA Kernels support 2,3,4,8 bits.
 
@@ -82,18 +85,19 @@ Basically, 4-bit quantization is recommended.
 
 cuda kernel does not support group size.
 
-Please note that [GPTQ](https://github.com/IST-DASLab/gptq) kernels are currently only optimized for OPT-175B running on 1xA100 or 2xA6000 and may thus yield suboptimal performance on smaller models or on other GPUs.
-
 ## Memory Usage
 |                           Model                                                             | Bits | memory(MiB) | benchmark(ppl) | Wikitext2 |   PTB     |    C4   | checkpoint size(GB) |
 | ------------------------------------------------------------------------------------------- | ---- | ----------- | ------------- | --------- | --------- | ------- | ------------------- |
 | [LLaMa-7B](https://arxiv.org/abs/2302.13971) with FP16                                      |  16  |    13940    |    5.23   |    5.67   |    8.79   |   7.05  |         12.5        |
 | [LLaMa-13B](https://arxiv.org/abs/2302.13971) with FP16                                     |  16  |     OOM     |     -     |    5.08   |    8.06   |   6.58  |         24.2        |
 | [LLaMa-7B](https://arxiv.org/abs/2302.13971) with [GPTQ](https://arxiv.org/abs/2210.17323)  |  8   |    7748     |    5.39   |    5.67   |   8.81   |   7.08  |          6.5        |
+| [LLaMa-13B](https://arxiv.org/abs/2302.13971) with [GPTQ](https://arxiv.org/abs/2210.17323) |  8   |    14570     |    5.00   |    5.09   |   8.06   |  6.61  |          12.4        |
 | [LLaMa-7B](https://arxiv.org/abs/2302.13971) with [GPTQ](https://arxiv.org/abs/2210.17323)  |  4   |    4740     |    6.23   |    6.79   |   10.67   |   8.28  |          3.5        |
 | [LLaMa-13B](https://arxiv.org/abs/2302.13971) with [GPTQ](https://arxiv.org/abs/2210.17323) |  4   |    8410     |    5.14   |    5.35   |   8.40   |  6.82  |          6.5        |
 | [LLaMa-7B](https://arxiv.org/abs/2302.13971) with [GPTQ](https://arxiv.org/abs/2210.17323)  |  3   |    3852     |    11.43  |    17.94  |   31.44   |   19.65  |          2.75        |
+| [LLaMa-13B](https://arxiv.org/abs/2302.13971) with [GPTQ](https://arxiv.org/abs/2210.17323) |  3   |    6870     |    5.58   |    6.77   |   10.29   |  8.34  |          5.06        |
 | [LLaMa-7B](https://arxiv.org/abs/2302.13971) with [GPTQ](https://arxiv.org/abs/2210.17323)  |  2   |    3076     |    4152  |    30749  |   45936   |   5045  |          2.0        |
+| [LLaMa-13B](https://arxiv.org/abs/2302.13971) with [GPTQ](https://arxiv.org/abs/2210.17323) |  2   |    5275     |    6903   |   13203   |   1384   |  8.34  |          5.06        |
 # Acknowledgements
 This code is based on [GPTQ](https://github.com/IST-DASLab/gptq)
 
